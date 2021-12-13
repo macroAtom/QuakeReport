@@ -14,8 +14,14 @@
      limitations under the License.
 -->
 <!-- Layout for a list of earthquakes -->
+<!-- 去掉listitem 中的分割线-->
+<!--    android:divider="@null"-->
+<!--    android:dividerHeight="0dp"-->
 <ListView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/list"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    android:layout_height="match_parent"
+    android:divider="@null"
+    android:dividerHeight="0dp"
+    />
