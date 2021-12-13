@@ -22,6 +22,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class EarthquakeActivity extends AppCompatActivity {
@@ -34,21 +38,58 @@ public class EarthquakeActivity extends AppCompatActivity {
         setContentView(R.layout.earthquake_activity);
 
         // Create a fake list of earthquake locations.
-        ArrayList<String> earthquakes = new ArrayList<>();
-        earthquakes.add("San Francisco");
-        earthquakes.add("London");
-        earthquakes.add("Tokyo");
-        earthquakes.add("Mexico City");
-        earthquakes.add("Moscow");
-        earthquakes.add("Rio de Janeiro");
-        earthquakes.add("Paris");
+//        ArrayList<EarthQuake> earthquakes = new ArrayList<EarthQuake>();
+//
+//        earthquakes.add(new EarthQuake("7.2","San Francisco","Feb 2, 2016"));
+//        earthquakes.add(new EarthQuake("6.1","London","July 20,2015"));
+//        earthquakes.add(new EarthQuake("3.9","Tokyo","Nov 10,2014"));
+//        earthquakes.add(new EarthQuake("5.4","Mexico City","May 3,2014"));
+//        earthquakes.add(new EarthQuake("2.8","Moscow","Jan 31,2013"));
+//        earthquakes.add(new EarthQuake("4.9","Rio de Janeiro","Aug 19,2012"));
+//        earthquakes.add(new EarthQuake("1.6","Paris","Oct 30,2011"));
+
+        ArrayList<EarthQuake> earthquakes = QueryUtils.extractEarthquakes();
+
 
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
 
+
+//        String strJson="{\"Employee\" :[{\"id\":\"01\",\"name\":\"Gopal Varma\",\"salary\":\"500000\"},{\"id\":\"02\",\"name\":\"Sairamkrishna\",\"salary\":\"500000\"},{\"id\":\"03\",\"name\":\"Sathish kallakuri\",\"salary\":\"600000\"}]}";
+//
+//        String data = "";
+//        try {
+//            JSONObject jsonRootObject = new JSONObject(strJson);
+//
+//            //Get the instance of JSONArray that contains JSONObjects
+//            JSONArray jsonArray = jsonRootObject.optJSONArray("Employee");
+//
+//            //Iterate the jsonArray and print the info of JSONObjects
+//            for(int i=0; i < jsonArray.length(); i++){
+//                JSONObject jsonObject = jsonArray.getJSONObject(i);
+//
+//                int id = Integer.parseInt(jsonObject.optString("id").toString());
+//
+//                int id_simple = jsonObject.optInt("id");
+//
+//                String name = jsonObject.optString("name").toString();
+//
+//                String name_simple = jsonObject.optString("name");
+//
+//                float salary = Float.parseFloat(jsonObject.optString("salary").toString());
+//
+//                int salary_simple = jsonObject.getInt("salary");
+//
+//                data += "Node"+i+" : \n id= "+ id +" \n Name= "+ name +" \n Salary= "+ salary +" \n";
+//            }
+//        } catch (JSONException e ) {
+//            e.printStackTrace();
+//        }
+
+
         // Create a new {@link ArrayAdapter} of earthquakes
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                this, android.R.layout.simple_list_item_1, earthquakes);
+        EarthQuakeAdapter adapter = new EarthQuakeAdapter(
+                this, R.layout.earthquake_list, earthquakes);
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
