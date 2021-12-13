@@ -2,11 +2,21 @@ package com.example.android.quakereport;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public final class QueryUtils {
 
@@ -71,19 +81,12 @@ public final class QueryUtils {
                  * 创建properties Json对象
                  *  Get “properties” JSONObject
                  */
-
                 JSONObject properties = currentEarthquake.optJSONObject("properties");
-
-
-
 
                 /**
                  * Extract “mag” for magnitude
                  */
-
-
-
-                String magnitude = properties.optString("mag");
+                Double magnitude = properties.optDouble("mag");
 
                 /**
                  * Extract “place” for magnitude
@@ -93,10 +96,9 @@ public final class QueryUtils {
                 /**
                  * Extract “time” for magnitude
                  */
-                String time = properties.getString("time");
+                long time = properties.getLong("time");
 
                 earthquakes.add(new EarthQuake(magnitude, location, time));
-
             }
 
 

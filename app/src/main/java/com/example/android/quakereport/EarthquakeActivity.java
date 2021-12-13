@@ -54,42 +54,9 @@ public class EarthquakeActivity extends AppCompatActivity {
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
 
-
-//        String strJson="{\"Employee\" :[{\"id\":\"01\",\"name\":\"Gopal Varma\",\"salary\":\"500000\"},{\"id\":\"02\",\"name\":\"Sairamkrishna\",\"salary\":\"500000\"},{\"id\":\"03\",\"name\":\"Sathish kallakuri\",\"salary\":\"600000\"}]}";
-//
-//        String data = "";
-//        try {
-//            JSONObject jsonRootObject = new JSONObject(strJson);
-//
-//            //Get the instance of JSONArray that contains JSONObjects
-//            JSONArray jsonArray = jsonRootObject.optJSONArray("Employee");
-//
-//            //Iterate the jsonArray and print the info of JSONObjects
-//            for(int i=0; i < jsonArray.length(); i++){
-//                JSONObject jsonObject = jsonArray.getJSONObject(i);
-//
-//                int id = Integer.parseInt(jsonObject.optString("id").toString());
-//
-//                int id_simple = jsonObject.optInt("id");
-//
-//                String name = jsonObject.optString("name").toString();
-//
-//                String name_simple = jsonObject.optString("name");
-//
-//                float salary = Float.parseFloat(jsonObject.optString("salary").toString());
-//
-//                int salary_simple = jsonObject.getInt("salary");
-//
-//                data += "Node"+i+" : \n id= "+ id +" \n Name= "+ name +" \n Salary= "+ salary +" \n";
-//            }
-//        } catch (JSONException e ) {
-//            e.printStackTrace();
-//        }
-
-
         // Create a new {@link ArrayAdapter} of earthquakes
         EarthQuakeAdapter adapter = new EarthQuakeAdapter(
-                this, R.layout.earthquake_list, earthquakes);
+                this, earthquakes);
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
