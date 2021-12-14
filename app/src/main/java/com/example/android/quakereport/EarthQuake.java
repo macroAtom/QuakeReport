@@ -7,6 +7,12 @@ public class EarthQuake {
     /** Time of the earthquake */
     private long mTimeInMilliseconds;
 
+
+    /**
+     * 地震详情URL
+     */
+    private String mEventUrl;
+
     /**
      * Constructs a new {@link EarthQuake} object.
      *
@@ -15,10 +21,11 @@ public class EarthQuake {
      * @param timeInMilliseconds is the time in milliseconds (from the Epoch) when the
      *  earthquake happened
      */
-    public EarthQuake(Double magnitude, String location, long timeInMilliseconds) {
+    public EarthQuake(Double magnitude, String location, long timeInMilliseconds, String eventUrl) {
         this.mMagnitude = magnitude;
         this.mLocation = location;
         this.mTimeInMilliseconds = timeInMilliseconds;
+        this.mEventUrl = eventUrl;
     }
 
     public Double getMagnitude() {
@@ -34,5 +41,9 @@ public class EarthQuake {
      */
     public long getTimeInMilliseconds() {
         return mTimeInMilliseconds;
+    }
+
+    public String getEventUrl() {
+        return mEventUrl;
     }
 }

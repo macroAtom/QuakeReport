@@ -15,10 +15,15 @@
  */
 package com.example.android.quakereport;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 //import android.support.v7.app.AppCompatActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -61,5 +66,30 @@ public class EarthquakeActivity extends AppCompatActivity {
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
         earthquakeListView.setAdapter(adapter);
+
+
+        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                // 通过数组列表获取地震对象
+//                EarthQuake earthQuake = earthquakes.get(position);
+
+//                或者按照answer中的示例获取对象
+                EarthQuake earthQuake = adapter.getItem(position);
+                // 通过地震对象数据获取发生地震的详情页面的url
+                String url = earthQuake.getEventUrl();
+
+                /**
+                 * 通过intent 向web 浏览器传递信息 并打开事件发生的详情页面
+                 */
+                Uri webpage = Uri.parse(url);
+                Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+
+            }
+        });
     }
 }

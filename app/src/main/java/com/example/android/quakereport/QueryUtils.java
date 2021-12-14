@@ -98,7 +98,16 @@ public final class QueryUtils {
                  */
                 long time = properties.getLong("time");
 
-                earthquakes.add(new EarthQuake(magnitude, location, time));
+                /**
+                 * 提取地震页面详情
+                 * Extract the value for the key called "url"
+                 */
+                String url = properties.getString("url");;
+
+
+                // Create a new {@link Earthquake} object with the magnitude, location, time,
+                // and url from the JSON response.
+                earthquakes.add(new EarthQuake(magnitude, location, time,url));
             }
 
 
