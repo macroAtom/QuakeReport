@@ -419,6 +419,16 @@ public final class QueryUtils {
 
         Log.i(LOG_TAG, "log fetchEarthquakeData: ");
 
+
+        /**
+         * 延迟请求
+         */
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
         // Create URL object
         URL url = createUrl(requestUrl);
         // Perform HTTP request to the URL and receive a JSON response back

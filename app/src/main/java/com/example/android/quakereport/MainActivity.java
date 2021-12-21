@@ -6,13 +6,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -33,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     ListView earthquakeListView;
 
     TextView mEmptyStateTextView;
+
+    ProgressBar mProgressBar;
 
     /**
      * Constant value for the earthquake loader ID. We can choose any integer.
@@ -57,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         earthquakeListView.setAdapter(mAdapter);
 
         mEmptyStateTextView = findViewById(R.id.empty_view);
+
+        mProgressBar = findViewById(R.id.loading_spinner);
 
         earthquakeListView.setEmptyView(mEmptyStateTextView);
 
@@ -84,6 +92,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
+        // Get a reference to the ConnectivityManager to check state of network connectivity
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+
         /**
          * 18:intro to loaders,part2 Lesson3-Threads & Parallelism
          * in first place to kick off a loader,并调用initLoader
@@ -99,7 +115,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
         Log.i(LOG_TAG, "log initLoader ");
-        loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this).forceLoad();
+
+        if(isConnected){
+            loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this).forceLoad();
+        }else {
+            mProgressBar.setVisibility(View.GONE);
+            mEmptyStateTextView.setText(R.string.no_internet);
+        }
+
 
 
 //
@@ -120,6 +143,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoadFinished(@NonNull Loader<List<EarthQuake>> loader, List<EarthQuake> data) {
         Log.i(LOG_TAG, "log onLoadFinished: "+data);
 
+
+        /**
+         * 隐藏indicator,因为数据已经加载
+         */
+        mProgressBar.setVisibility(View.GONE);
+
         /**
          * 设置地震为空时显示的文本
          */
@@ -133,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (data != null && !data.isEmpty()) {
             mAdapter.addAll(data);
         }
-
     }
 
     @Override
