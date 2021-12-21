@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +24,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     /**
      * URL for earthquake data from the USGS dataset
      */
-    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=20";
+    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
 
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
     //    ArrayList<EarthQuake> earthquakes;
     EarthQuakeAdapter mAdapter;
 
+    ListView earthquakeListView;
+
+    TextView mEmptyStateTextView;
 
     /**
      * Constant value for the earthquake loader ID. We can choose any integer.
@@ -44,13 +48,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+        earthquakeListView = (ListView) findViewById(R.id.list);
 
         List<EarthQuake> earthquakes = new ArrayList<EarthQuake>();
         mAdapter = new EarthQuakeAdapter(this, earthquakes);
 
         // so the list can be populated in the user interface
         earthquakeListView.setAdapter(mAdapter);
+
+        mEmptyStateTextView = findViewById(R.id.empty_view);
+
+        earthquakeListView.setEmptyView(mEmptyStateTextView);
 
         // Set an item click listener on the ListView, which sends an intent to a web browser
         // to open a website with more information about the selected earthquake.
@@ -111,6 +119,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoadFinished(@NonNull Loader<List<EarthQuake>> loader, List<EarthQuake> data) {
         Log.i(LOG_TAG, "log onLoadFinished: "+data);
+
+        /**
+         * 设置地震为空时显示的文本
+         */
+        mEmptyStateTextView.setText(R.string.no_earthquakes);
+
         // Clear the adapter of previous earthquake data
         mAdapter.clear();
 
@@ -119,8 +133,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (data != null && !data.isEmpty()) {
             mAdapter.addAll(data);
         }
-
-
 
     }
 
