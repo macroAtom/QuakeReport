@@ -416,6 +416,9 @@ public final class QueryUtils {
      */
 
     public static List<EarthQuake> fetchEarthquakeData(String requestUrl) {
+
+        Log.i(LOG_TAG, "log fetchEarthquakeData: ");
+
         // Create URL object
         URL url = createUrl(requestUrl);
         // Perform HTTP request to the URL and receive a JSON response back
@@ -432,6 +435,7 @@ public final class QueryUtils {
         List<EarthQuake> earthQuakes = extractFeatureFromJson(jsonResponse);
 
         // Return the list of {@link Earthquake}
+
         return earthQuakes;
     }
 }

@@ -9,6 +9,7 @@ import androidx.loader.content.Loader;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -22,9 +23,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     /**
      * URL for earthquake data from the USGS dataset
      */
-    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
+    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=20";
 
-    public static final String LOG_TAG = EarthquakeActivity.class.getSimpleName();
+    public static final String LOG_TAG = MainActivity.class.getSimpleName();
     //    ArrayList<EarthQuake> earthquakes;
     EarthQuakeAdapter mAdapter;
 
@@ -37,6 +38,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Log.i(LOG_TAG, "log onCreate: start ");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
@@ -85,8 +89,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Get a reference to the LoaderManager, in order to interact with loaders.
         LoaderManager loaderManager = LoaderManager.getInstance(this);
 
+
+        Log.i(LOG_TAG, "log initLoader ");
         loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this).forceLoad();
 
+
+//
 //        getSupportLoaderManager().initLoader(EARTHQUAKE_LOADER_ID, null, this).forceLoad();
 
     }
@@ -94,12 +102,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @NonNull
     @Override
     public Loader<List<EarthQuake>> onCreateLoader(int id, @Nullable Bundle args) {
+
+        Log.i(LOG_TAG, "log onCreateLoader: " + new EarthquakeLoader(MainActivity.this,USGS_REQUEST_URL));
+
         return new EarthquakeLoader(MainActivity.this,USGS_REQUEST_URL);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<List<EarthQuake>> loader, List<EarthQuake> data) {
-
+        Log.i(LOG_TAG, "log onLoadFinished: "+data);
         // Clear the adapter of previous earthquake data
         mAdapter.clear();
 
@@ -109,11 +120,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mAdapter.addAll(data);
         }
 
+
+
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<List<EarthQuake>> loader) {
 // Loader reset, so we can clear out our existing data.
+        Log.i(LOG_TAG, "log onLoaderReset: "+mAdapter);
         mAdapter.clear();
+
     }
 }

@@ -284,6 +284,7 @@ public class EarthquakeActivity extends AppCompatActivity {
                 return null;
             }
             List<EarthQuake> result = QueryUtils.fetchEarthquakeData(urls[0]);
+            Log.i(LOG_TAG, "log doInBackground: "+result);
             return result;
 
         }

@@ -1,6 +1,7 @@
 package com.example.android.quakereport;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,14 +11,12 @@ import java.util.List;
 
 public class EarthquakeLoader extends AsyncTaskLoader<List<EarthQuake>> {
 
-
+    public static final String LOG_TAG = EarthquakeLoader.class.getSimpleName();
     /**
      * query url
      */
 
     private String mUrl;
-
-    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
 
 
     public EarthquakeLoader(@NonNull Context context,String url) {
@@ -31,14 +30,20 @@ public class EarthquakeLoader extends AsyncTaskLoader<List<EarthQuake>> {
 
     @Override
     protected void onStartLoading() {
+
+        Log.i(LOG_TAG, "log onStartLoading: ");
+
         forceLoad();
+
+
+
     }
 
 
     @Nullable
     @Override
     public List<EarthQuake> loadInBackground() {
-
+        Log.i(LOG_TAG, "log loadInBackground: ");
         List<EarthQuake> result = QueryUtils.fetchEarthquakeData(mUrl);
 
         return result;
