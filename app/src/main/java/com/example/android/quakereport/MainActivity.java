@@ -8,11 +8,15 @@ import androidx.loader.content.Loader;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -22,13 +26,15 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<EarthQuake>>{
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<EarthQuake>> {
 
 
     /**
      * URL for earthquake data from the USGS dataset
      */
-    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
+//    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
+
+    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query";
 
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
     //    ArrayList<EarthQuake> earthquakes;
@@ -70,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         // Set an item click listener on the ListView, which sends an intent to a web browser
         // to open a website with more information about the selected earthquake.
+        /**
+         * 设置监听器，监听list item的点击，并产生新的行为
+         */
         earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -109,39 +118,100 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
          * 当调用forceLoad 时，Loader将被启动
          */
 
+        //老版本初始化loader 的方式
+        // getSupportLoaderManager().initLoader(EARTHQUAKE_LOADER_ID, null, this).forceLoad();
 
         // Get a reference to the LoaderManager, in order to interact with loaders.
         LoaderManager loaderManager = LoaderManager.getInstance(this);
 
-
         Log.i(LOG_TAG, "log initLoader ");
-
-        if(isConnected){
+        if (isConnected) {
             loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this).forceLoad();
-        }else {
+        } else {
             mProgressBar.setVisibility(View.GONE);
             mEmptyStateTextView.setText(R.string.no_internet);
         }
 
+    }
 
+    /**
+     * inflate a mean
+     * 会在页面上显示菜单标题，如果有icon，会显示Icon
+     * @param menu
+     * @return
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main,menu);
+        return true;
+    }
 
-//
-//        getSupportLoaderManager().initLoader(EARTHQUAKE_LOADER_ID, null, this).forceLoad();
+    /**
+     * 点击菜单项后的行为
+     * @param
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
+        int id = item.getItemId();
+        Log.i(LOG_TAG, "onOptionsItemSelected: id:"+id);
+        MenuItem c = item;
+
+        Log.i(LOG_TAG, "onOptionsItemSelected: "+c);
+
+        if(id == R.id.action_settings){
+            Intent settingsIntent  = new Intent(this,SettingsActivity.class);
+
+            Log.i(LOG_TAG,"onOptionsItemSelected: settingsIntent "+settingsIntent);
+
+            startActivity(settingsIntent );
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @NonNull
     @Override
     public Loader<List<EarthQuake>> onCreateLoader(int id, @Nullable Bundle args) {
 
-        Log.i(LOG_TAG, "log onCreateLoader: " + new EarthquakeLoader(MainActivity.this,USGS_REQUEST_URL));
+        Log.i(LOG_TAG, "Log onCreateLoader: " + new EarthquakeLoader(MainActivity.this, USGS_REQUEST_URL));
 
-        return new EarthquakeLoader(MainActivity.this,USGS_REQUEST_URL);
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String minMagnitude = sharedPrefs.getString(
+                getString(R.string.settings_min_magnitude_key),
+                getString(R.string.settings_min_magnitude_default));
+
+        String orderBy = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default)
+        );
+
+        Uri baseUri = Uri.parse(USGS_REQUEST_URL);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        uriBuilder.appendQueryParameter("format", "geojson");
+        uriBuilder.appendQueryParameter("limit", "10");
+        uriBuilder.appendQueryParameter("minmag", minMagnitude);
+        uriBuilder.appendQueryParameter("orderby", orderBy);
+
+        String new_nrl = uriBuilder.toString();
+        Log.i(LOG_TAG, "onCreateLoader: "+new_nrl);
+        return new EarthquakeLoader(MainActivity.this, uriBuilder.toString());
     }
 
+
+    /**
+     * 后台线程冲网络加载完数据后，执行的方法
+     *
+     * @param loader
+     * @param data   从网络端请求的数据对象
+     */
     @Override
     public void onLoadFinished(@NonNull Loader<List<EarthQuake>> loader, List<EarthQuake> data) {
-        Log.i(LOG_TAG, "log onLoadFinished: "+data);
+        Log.i(LOG_TAG, "log onLoadFinished: " + data);
 
 
         /**
@@ -167,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoaderReset(@NonNull Loader<List<EarthQuake>> loader) {
 // Loader reset, so we can clear out our existing data.
-        Log.i(LOG_TAG, "log onLoaderReset: "+mAdapter);
+        Log.i(LOG_TAG, "log onLoaderReset: " + mAdapter);
         mAdapter.clear();
 
     }
